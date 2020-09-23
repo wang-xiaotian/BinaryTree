@@ -12,15 +12,19 @@ namespace Tree
         /// <summary>
         /// to insert a node in a tree
         /// check root: 
-        ///     if empty -> root=new node
-        ///     else insert new node in this tree
-        ///         by recursion method Node.insertNode(Node n)
+        ///     if empty -> root=new node;
+        ///     else insert new node in this tree 
+        ///         by recursion method Node.insertNode(Node n);
         /// </summary>
-        /// <param name="n"></param>
+        /// <param name="n">added node</param>
         public override void Insert(Node<T> n)
         {
-            if (base.IsEmpty()) this.Root = n;
-            else base.Root.InsertNodeBinarySearchT(n);
+            // don't insert null in binary search tree
+            if (n != null)
+            {
+                if (base.IsEmpty()) this.Root = n;
+                else base.Root.InsertNodeBinarySearchT(n);
+            }
         }
 
 

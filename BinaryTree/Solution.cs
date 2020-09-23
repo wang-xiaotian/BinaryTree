@@ -73,6 +73,37 @@ namespace Tree
                 }
                 return bt;
             }
+            /*
+             * Parent(r) =⌊(r−1)/ 2⌋ if r≠0.
+             * Left child(r) = 2r + 1 if 2r + 1 < n.
+             * Right child(r) = 2r + 2 if 2r + 2 < n.
+             * Left sibling(r) = r−1 if r is even and r≠0.
+             * Right sibling(r) = r + 1 if r is odd and r + 1 < n.
+             */
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        internal static BST<T> BuildBinarySearchTreeFromList<T>(List<object> list)
+        {
+            if (list == null) return null;
+            else
+            {
+                BST<T> bSt = new BST<T>();
+                foreach (object i in list)
+                {
+                    Node<T> temNode;
+                    if (i == null) temNode = null;
+                    else temNode = new Node<T>(i);
+                    bSt.Insert(temNode);
+                }
+                return bSt;
+            }
         }
     }
 }
