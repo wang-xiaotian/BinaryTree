@@ -37,7 +37,12 @@
     - [Environment Setup](#environment-Setup)
     - [Testing](#testing)
   - [Screenshot](#screenshot)
-  - [Code Sample](#code)
+  - [Binary Search Tree Validation](#binary-search-tree-validation)
+  - [Breadth-first Tree Traversal](#breadth-frist-search)
+  - [Inorder Depth-first Tree Traversal](#depth-frist-search-inorder-by-iteration)
+  - [Preorder Depth-first Tree Traversal](#depth-frist-search-preorder)
+  - [Postorder Depth-first Tree Traversal](#depth-frist-search-postorder)
+  - [Search Node's Inorder Successor](#locate-an-object-and-return-its-inorder-successor)
   - [Challenges](#challenges)
   - [Resource](#resource)
   - [License](#license)
@@ -65,60 +70,177 @@ $
 ```shell
 >
 ```
-<!-- !curl -X POST HTTP://127.0.0.1:5000/test --header "Content-Type: application/json" --data {\"string_to_cut\":\"EXAMPLE_STRING\"} -->
 ---
 
 ## Screenshot
 <!--![demo GIF by GIF MAKER](https://user-images.githubusercontent.com/56288794/88518703-c501bb80-cfa5-11ea-92a5-67ba192951b1.gif) -->
 ---
-## Code
+## Binary Search Tree Validation
 
 #### How to validate whether a binary tree is a binary search tree?
 
 ---
 ```csharp
 /// <summary>
-/// iterate all nodes starting from root of the tree with in-order traversal;
-///
-/// if left node is bigger than parent, return false
-/// else if right node is smaller and equal to parent, return false
-/// else go to next node
+/// iterate all nodes starting from root with in-order traversal;
+/// inorder traversal of BST is in ascending order.
+/// if current node's value is bigger than next, then this is not BST
 /// </summary>
-/// <param name="root"></param>
-/// <returns></returns>
 internal static bool IsValidBST(Node<int> root)
 {
-  int min = int.MinValue; // store the current minimum value; be caution with edge cases (first input == int.MinValue)
+  int min = int.MinValue; // store the current minimum value; caution: edge cases
   bool result = true; // store the result of this BST's validation - true or false;
   int count = 0; // store the number of nodes that have been validated;
-  if (root == null) return true; // empty tree - return true; depends on function requirements;
+
+  if (root == null) return true; // empty tree - return true; depends on requirements;
   else
   {
     if (root.Left == null && root.Right == null) return result; // single node tree -> return true
     IsValidBSTNode(root, ref min, ref result, ref count); // check all nodes starting from root node;
-    Console.WriteLine();
     return result; // return final result
   }
 }
 
-/// <summary>
-/// check all nodes in in-order traverse;
-/// next value shouldn't be smaller than previous one;
-/// assume no duplicate value in this binary tree;
-/// </summary>
-/// <param name="node">validate this node</param>
-/// <param name="minimum">comparing node.Data with current minimum value</param>
-/// <param name="result">result's default value is true; change result to false if at least one violation has been found</param>
-/// <param name="count">number of nodes that have been validated</param>
 private static void IsValidBSTNode(Node<int> node, ref int minimum, ref bool result, ref int count)
 {
-  if (node.Left != null) IsValidBSTNode(node.Left, ref minimum, ref result, ref count); // check left child node
-  if (node.Data > minimum || count == 0) minimum = node.Data; // check myself; bigger than the minimum -> assign myself to minimum;
-  else result = false; // node's value smaller or equal than current minimum
+  if (node.Left != null) IsValidBSTNode(node.Left, ref minimum, ref result, ref count); // check left child;
+
+  if (node.Data > minimum || count == 0) minimum = node.Data; // current value is bigger than the minimum -> assign myself to minimum;
+  else result = false;
   count++; // number of nodes that have been validated
-  if (node.Right != null) { IsValidBSTNode(node.Right, ref minimum, ref result, ref count); } // check right node
+
+  if (node.Right != null) { IsValidBSTNode(node.Right, ref minimum, ref result, ref count); } // check right child;
 }
 ```
+## Binary Tree Traversal
+### Breadth-frist Search
+```cs
+/// <summary>
+/// traverse binary tree by levels-BFS
+/// from top to bottom, level by level, from left to right
+/// </summary>
+public IList<IList<T>> LevelOrder(Node<T> root)
+{
+  IList<Node<T>> level = new List<Node<T>>(); // store nodes for current level
+  IList<Node<T>> nextLevel = new List<Node<T>>(); // store nodes for next level
+  IList<IList<T>> nodesByLevel = new List<IList<T>>(); // store nodes by levels
+  
+  if(root != null) level.Add(root); // initial current level by adding root node of a binary tree
+  while (level.Count != 0)
+  {
+    IList<T> valueLevel = new List<T>(); // store nodes for current level
+    foreach(Node<T> n in level) // iterate all nodes in this level
+    {
+      valueLevel.Add(n.Data); // record nodes's value in a list
+      if (n.Left != null) nextLevel.Add(n.Left); // add left child in next level
+      if (n.Right != null) nextLevel.Add(n.Right); // add right child in next level
+    }
+    nodesByLevel.Add(valueLevel); // record curretn level's nodes' value list
+    level = nextLevel; // move to next level
+    nextLevel = new List<Node<T>>(); // reset next level's next level
+  }
+  return nodesByLevel;
+}
+```
+### Depth-frist Search (Inorder by Iteration)
+```cs
+/// <summary>
+/// iterative solution
+/// </summary>
+public IList<T> InOrderTraverse2(Node<T> node)
+{
+  IList<Node<T>> stackList = new List<Node<T>>(); // tempraryly store unfinished nodes in here; first in last out            IList<T> result = new List<T>();
+  Node<T> iterator = new Node<T>(default); // store the iterator node; it will traverse inorder
+  IList<T> result = new List<T>();
+
+  if (node == null) return null;
+  stackList.Add(new Node<T>(node.Data, node.Left, node.Right));
+  while (stackList.Count != 0)
+  {
+    iterator = stackList[stackList.Count - 1]; // last in first out
+    if (iterator.Left != null)
+    {
+    stackList.Add(new Node<T>(iterator.Left.Data, iterator.Left.Left, iterator.Left.Right));
+    iterator.Left = null; // left child has been added
+    } 
+    else {
+      result.Add(iterator.Data);
+      stackList.RemoveAt(stackList.Count - 1);
+      if (iterator.Right != null)
+      {
+        stackList.Add(new Node<T>(iterator.Right.Data, iterator.Right.Left, iterator.Right.Right));
+        iterator.Right = null; // left child has been added
+      }
+    }
+  }
+  return result;
+}
+```
+
+### Depth-frist Search (Preorder)
+```csharp
+/// <summary>
+/// traverse the tree with Pre-order sequence with recursion 
+/// Parent -> Left Child -> Right child
+/// </summary>
+public void PreOrderTraverse(Node<T> node)
+{
+  if (IsEmpty()) Console.WriteLine("Empty Tree");
+  else
+  {
+    Console.Write($"{node} - "); // visit parent
+    if (node.Left != null) PreOrderTraverse(node.Left); // visit left
+    if (node.Right != null) PreOrderTraverse(node.Right); // visit right
+  }
+}
+```
+
+### Depth-frist Search (Postorder)
+```csharp
+/// <summary>
+/// traverse the tree with Post-order sequence with recursion
+/// Left Child -> Right child -> Parent
+/// </summary>
+public void PostOrderTraverse(Node<T> node)
+{
+  if (IsEmpty()) Console.WriteLine("Empty Tree");
+  else
+  {
+    if (node.Left != null) PostOrderTraverse(node.Left); // visit left
+    if (node.Right != null) PostOrderTraverse(node.Right); // visit right
+    Console.Write($"{node} - "); // visit parent
+  }
+}
+```
+
+### Locate an Object and Return its Inorder Successor
+```csharp
+/// <summary>
+/// FIND EXISTING Node's inorder successor, inorder searching Node and return its successor
+/// </summary>
+public Node<T> InOrderSuccessor(Node<T> root, Node<T> target)
+{
+  bool gate = false; // gate will be true when find target node
+  Node<T> result = null; // strore successor node if we find it
+  InOrderSuccessorFinder(root, target, ref gate, ref result); 
+  return result;
+}
+
+/// <summary>
+/// locate target node and iterate one step further to locate successor node;
+/// store the successor node in reference, then return
+/// </summary>
+public void InOrderSuccessorFinder(Node<T> root, Node<T> target, ref bool gate, ref Node<T> result)
+{
+  if (root.Left != null) InOrderSuccessorFinder(root.Left, target, ref gate, ref result); // search root's left child
+            
+  if (gate) { result = root; gate = false; return; } // located the inorder successor -> stop searching return
+  if (root.CompareTo(target) == 0) gate=true; // located the same node -> open gate and next node is inorder successor 
+
+  if (root.Right != null) InOrderSuccessorFinder(root.Right, target, ref gate, ref result); // search root's right child
+}
+```
+
 
 ## Challenges
 
