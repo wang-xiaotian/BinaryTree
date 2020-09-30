@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Tree
 {
-    class Node<T> : IComparable<Node<T>>
-    {
+	class Node<T> : IComparable<Node<T>>
+	{
 		/// <summary>
 		/// store node's value
 		/// </summary>
-		public T Data { get; set; } 
+		public T Data { get; set; }
 
 		/// <summary>
 		/// store node's left child
@@ -19,24 +19,30 @@ namespace Tree
 		/// <summary>
 		/// store node's right child
 		/// </summary>
-		public Node<T> Right { get; set; } 
+		public Node<T> Right { get; set; }
 
 		/// <summary>
-		/// construction of Node with default values
+		/// point to next right node
+		/// level order traverse - on each level, if your next node is your 'next right node'
 		/// </summary>
-		/// <param name="data"></param>
-		public Node(T data, Node<T> left=null, Node<T> right=null)
+        public Node<T> Next { get; set; }
+
+        /// <summary>
+        /// construction of Node with default values
+        /// </summary>
+        /// <param name="data"></param>
+        public Node(T data, Node<T> left = null, Node<T> right = null)
 		{
 			this.Data = data; // assign input value to this.Data;
 			this.Left = left; // left node is empty
-			this.Right = left; // right node is empty
+			this.Right = right; // right node is empty
 		}
 
 		public Node(object data, Node<T> left = null, Node<T> right = null)
 		{
 			this.Data = (T)data; // assign input value to this.Data;
 			this.Left = left; // left node is empty
-			this.Right = left; // right node is empty
+			this.Right = right; // right node is empty
 		}
 
 		public override string ToString()
@@ -60,13 +66,21 @@ namespace Tree
 		/// <param name="n"></param>
 		protected internal void InsertNodeBinarySearchT(Node<T> n)
 		{
-			if(this.Data.ToString().CompareTo(n.Data.ToString()) == -1)
+			if (this.CompareTo(n) == 1)
 			{
-				if(this.Left != null) this.Left.InsertNodeBinarySearchT(n); // insert left if smaller than
+				if (this.Left != null)
+				{
+					this.Left.InsertNodeBinarySearchT(n);
+				} // insert left if smaller than
+
 				else this.Left = n;
-			} else
+			}
+			else
 			{
-				if (this.Right != null) this.Right.InsertNodeBinarySearchT(n);
+				if (this.Right != null)
+				{
+					this.Right.InsertNodeBinarySearchT(n);
+				}
 				else this.Right = n;
 			}
 		}
@@ -93,10 +107,10 @@ namespace Tree
 		/// </summary>
 		/// <returns>true - no children; false - at least one child</returns>
 		protected internal bool IsLeafNode()
-        {
+		{
 			if (this.Left == null && this.Right == null) return true;
 			else return false;
-        }
+		}
 
 		/// <summary>
 		/// interface implementation of IComparable
@@ -104,10 +118,14 @@ namespace Tree
 		/// </summary>
 		/// <param name="node">compare input node with this.Node</param>
 		/// <returns>return 1 this > than input node; -1 less; 0 equal </returns>
-        int IComparable<Node<T>>.CompareTo(Node<T> other)
-        {
-			if (other == null) throw new NotImplementedException();
-			else return this.Data.ToString().CompareTo(other.Data.ToString());
+		public int CompareTo(Node<T> other)
+		{
+			if (other == null) return -2;
+			else
+			{
+				try { return Convert.ToInt32(this.Data).CompareTo(Convert.ToInt32(other.Data)); }
+				catch (FormatException e) { Console.WriteLine(e); return -2; }
+			}
 		}
-    }
+	}
 }

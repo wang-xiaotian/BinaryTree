@@ -82,14 +82,13 @@ namespace Tree
              */
         }
 
-
         /// <summary>
-        /// 
+        ///  
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <returns></returns>
-        internal static BST<T> BuildBinarySearchTreeFromList<T>(List<object> list)
+        internal static BST<T> BuildBSTFromList<T>(List<object> list)
         {
             if (list == null) return null;
             else
