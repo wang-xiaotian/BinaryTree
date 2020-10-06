@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -13,8 +14,7 @@ namespace Tree
             Console.WriteLine("Hello Binary Tree!");
             List<object> treeValue = new List<object> { 4, 7, null, 10, 5, 1, 2, 8, 3, 6 }; ;
             BinaryTreeTest(in treeValue);
-            BinarySearchTreeTest(treeValue);
-
+            //BinarySearchTreeTest(treeValue);
         }
 
         /// <summary>
@@ -102,6 +102,20 @@ namespace Tree
             Console.WriteLine("Pre-order Traverse:");
             binaryT.PreOrderTraverse(binaryT.Root);
             Console.WriteLine("\n---------------------------------");
+
+            Console.WriteLine("LowestCommonAnsestor: Pre-order Traverse:");
+            foreach (object i in treeValue)
+            {
+                if (i == null) continue;
+                foreach (object j in treeValue)
+                {
+                    if (j == null) continue;
+                    binaryT.LowestCommonAncestorRecursion(binaryT.Root, new Node<int>((int)i), new Node<int>((int)j));
+                }
+            }
+            Console.WriteLine("\n---------------------------------");
+
+
         }
     }
 }
